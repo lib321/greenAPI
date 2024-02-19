@@ -1,0 +1,44 @@
+* {
+    margin: 0;
+    padding: 0;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.main-container {
+    display: flex;
+    justify-content: center;
+    padding-top: 40px;
+}
+
+.left-container {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    margin-right: 50px;
+}
+
+.right-container {
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+}
+
+.label-form {
+    margin-bottom: 10px;
+    padding: 5px;
+}
+
+.button {
+    margin-bottom: 20px;
+    padding: 5px;
+}
+
+.response {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+}
+
+.response-field {
+    padding-bottom: 85%;
+}

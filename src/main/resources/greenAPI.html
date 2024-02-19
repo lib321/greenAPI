@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Green API</title>
+    <link rel="stylesheet" href="css/greenAPI.css">
+</head>
+<body>
+
+<div class="main-container">
+    <div class="left-container">
+        <label for="idInstance"></label>
+        <input class="label-form" type="text" id="idInstance" placeholder="IdInstance">
+
+        <label for="apiTokenInstance"></label>
+        <input class="label-form" type="text" id="apiTokenInstance" placeholder="ApiTokenInstance">
+
+        <button onclick="getSettings()" class="button">getSettings</button>
+        <button onclick="getStateInstance()" class="button">getStateInstance</button>
+
+        <label for="phoneNumber"></label>
+        <input class="label-form" type="text" id="phoneNumber" placeholder="phoneNumber">
+
+        <label for="sendMes"></label>
+        <input class="label-form" type="text" id="sendMes" placeholder="sendMessage">
+
+        <button onclick="sendMessage()" class="button">sendMessage</button>
+
+        <label for="phoneNumber2"></label>
+        <input class="label-form" type="text" id="phoneNumber2" placeholder="phoneNumber">
+
+        <label for="sendFile"></label>
+        <input class="label-form" type="text" id="sendFile" placeholder="sendFileByURL">
+
+        <button onclick="sendFileByUrl()" class="button">sendFileByURL</button>
+    </div>
+    <div  class="right-container">
+        <p class="response">Ответ:</p>
+        <label for="responseField"></label>
+        <textarea class="response-field" id="responseField" readonly></textarea>
+    </div>
+    <script>
+        function getSettings() {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiTokenInstance = document.getElementById('apiTokenInstance').value;
+
+            const apiUrl = `https://api.green-api.com/waInstance${idInstance}/getSettings/${apiTokenInstance}`;
+
+            fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('responseField').value = JSON.stringify(data, null, 2);
+                });
+        }
+
+        function getStateInstance() {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiTokenInstance = document.getElementById('apiTokenInstance').value;
+            const apiUrl = `https://api.green-api.com/waInstance${idInstance}/getStateInstance/${apiTokenInstance}`;
+            fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('responseField').value = JSON.stringify(data, null, 2);
+                });
+        }
+
+        function sendMessage() {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiTokenInstance = document.getElementById('apiTokenInstance').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const messageText = document.getElementById('sendMes').value;
+
+            const apiUrl = `https://api.green-api.com/waInstance${idInstance}/sendMessage/${apiTokenInstance}`;
+            const formattedChatId = `${phoneNumber}@c.us`;
+            const requestBody = {
+                chatId: formattedChatId,
+                message: messageText
+            };
+
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('responseField').value = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('responseField').value = 'Error occurred.';
+                });
+        }
+
+        function sendFileByUrl() {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiTokenInstance = document.getElementById('apiTokenInstance').value;
+            const phoneNumber = document.getElementById('phoneNumber2').value;
+            const fileUrl = document.getElementById('sendFile').value;
+
+            const fileName = extractFileNameFromUrl(fileUrl);
+            const caption = extractCaptionFromFileName(fileName);
+            const apiUrl = `https://api.green-api.com/waInstance${idInstance}/sendFileByUrl/${apiTokenInstance}`;
+
+            const requestBody = {
+                chatId: `${phoneNumber}@c.us`,
+                urlFile: fileUrl,
+                fileName: fileName,
+                caption: caption
+            };
+
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('responseField').value = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('responseField').value = 'Error occurred.';
+                });
+        }
+
+        function extractFileNameFromUrl(url) {
+            const urlParts = url.split('/');
+            return urlParts[urlParts.length - 1];
+        }
+
+        function extractCaptionFromFileName(fileName) {
+            return fileName.replace(/\.[^/.]+$/, "");
+        }
+
+    </script>
+</div>
+
+</body>
+</html>
